@@ -60,6 +60,21 @@
         audio::-webkit-media-controls-panel {
             background-color: rgba(255, 255, 255, 0.1);
         }
+
+        /* 이미지 비율 유지를 위한 추가 스타일 */
+        .media-image {
+            max-width: 100%;
+            max-height: 400px; /* 최대 높이 제한 */
+            object-fit: contain; /* 비율 유지, 크롭 없이 전체 이미지 표시 */
+            width: auto;
+            height: auto;
+        }
+
+        @media (max-width: 768px) {
+            .media-image {
+                max-height: 300px; /* 모바일에서 더 작은 최대 높이 */
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen transition-all duration-300" id="body">
@@ -80,7 +95,6 @@
                 </div>
 
                 <div class="flex items-center space-x-4">
-                    <!-- 검색 -->
                     <div class="relative hidden md:block">
                         <svg class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -90,7 +104,6 @@
                                onkeyup="searchPosts(this.value)">
                     </div>
 
-                    <!-- 새 글 작성 -->
                     <button onclick="openEditor()" 
                             class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -99,7 +112,6 @@
                         <span class="hidden sm:inline">새 글 작성</span>
                     </button>
 
-                    <!-- 다크모드 토글 -->
                     <button onclick="toggleDarkMode()" 
                             class="p-2 rounded-full transition-all duration-200 hover:shadow-lg" id="darkModeBtn">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="darkModeIcon">
@@ -112,10 +124,8 @@
     </header>
 
     <div class="flex max-w-6xl mx-auto">
-        <!-- 사이드바 -->
         <aside class="fixed lg:sticky top-16 h-screen lg:h-auto w-64 lg:w-72 z-40 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 bg-white/70 backdrop-blur-sm" id="sidebar">
             <div class="p-6 space-y-6">
-                <!-- 모바일 검색 -->
                 <div class="lg:hidden">
                     <div class="relative">
                         <svg class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,7 +137,6 @@
                     </div>
                 </div>
 
-                <!-- 통계 -->
                 <div class="p-4 rounded-xl shadow-lg" id="statsCard">
                     <h3 class="text-lg font-semibold mb-3 flex items-center">
                         <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -135,12 +144,9 @@
                         </svg>
                         통계
                     </h3>
-                    <div class="space-y-2 text-sm" id="stats">
-                        <!-- 통계 내용이 여기에 동적으로 추가됩니다 -->
-                    </div>
+                    <div class="space-y-2 text-sm" id="stats"></div>
                 </div>
 
-                <!-- 태그 필터 -->
                 <div class="p-4 rounded-xl shadow-lg" id="tagsCard">
                     <h3 class="text-lg font-semibold mb-3 flex items-center">
                         <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -148,25 +154,18 @@
                         </svg>
                         태그 필터
                     </h3>
-                    <div class="flex flex-wrap gap-2" id="tagFilter">
-                        <!-- 태그들이 여기에 동적으로 추가됩니다 -->
-                    </div>
+                    <div class="flex flex-wrap gap-2" id="tagFilter"></div>
                 </div>
             </div>
         </aside>
 
-        <!-- 오버레이 -->
         <div class="fixed inset-0 bg-black/50 z-30 lg:hidden hidden" id="overlay" onclick="toggleSidebar()"></div>
 
-        <!-- 메인 콘텐츠 -->
         <main class="flex-1 p-6">
-            <div id="postsContainer">
-                <!-- 포스트들이 여기에 동적으로 추가됩니다 -->
-            </div>
+            <div id="postsContainer"></div>
         </main>
     </div>
 
-    <!-- 에디터 모달 -->
     <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden" id="editorModal">
         <div class="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl" id="editorContent">
             <div class="p-6">
@@ -179,14 +178,12 @@
                     </button>
                 </div>
 
-                <!-- 제목 입력 -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-2">제목</label>
                     <input type="text" id="postTitle" placeholder="포스트 제목을 입력하세요..." 
                            class="w-full p-3 rounded-lg border transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none">
                 </div>
 
-                <!-- 미디어 추가 -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-2">미디어</label>
                     <div class="flex space-x-2 mb-3">
@@ -210,27 +207,21 @@
                         </button>
                     </div>
 
-                    <!-- 미디어 목록 -->
-                    <div id="mediaList" class="space-y-3">
-                        <!-- 미디어 아이템들이 여기에 추가됩니다 -->
-                    </div>
+                    <div id="mediaList" class="space-y-3"></div>
                 </div>
 
-                <!-- 내용 입력 -->
                 <div class="mb-4">
                     <label class="block text-sm font-medium mb-2">내용</label>
                     <textarea id="postContent" placeholder="오늘의 이야기를 들려주세요..." rows="12" 
                               class="w-full p-3 rounded-lg border transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none"></textarea>
                 </div>
 
-                <!-- 태그 입력 -->
                 <div class="mb-6">
                     <label class="block text-sm font-medium mb-2">태그</label>
                     <input type="text" id="postTags" placeholder="태그를 쉼표로 구분하여 입력하세요... (예: 일상, 생각, 감정)" 
                            class="w-full p-3 rounded-lg border transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none">
                 </div>
 
-                <!-- 액션 버튼 -->
                 <div class="flex justify-end space-x-3">
                     <button onclick="closeEditor()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                         취소
@@ -247,7 +238,6 @@
     </div>
 
     <script>
-        // 전역 변수들
         let posts = JSON.parse(localStorage.getItem('blogPosts')) || [
             {
                 id: 1,
@@ -269,7 +259,7 @@
                 comments: 1,
                 media: []
             }
-        ].map(post => ({ ...post, id: Number(post.id) })); // ID를 숫자로 보장
+        ].map(post => ({ ...post, id: Number(post.id) }));
 
         let currentPostId = null;
         let darkMode = localStorage.getItem('darkMode') === 'true';
@@ -277,9 +267,7 @@
         let selectedTags = [];
         let currentMedia = [];
 
-        // 페이지 로드 시 초기화
         document.addEventListener('DOMContentLoaded', function() {
-            // 로컬 스토리지에서 가져온 데이터의 ID를 숫자로 변환
             posts = posts.map(post => ({ ...post, id: Number(post.id) }));
             loadPosts();
             updateStats();
@@ -287,7 +275,6 @@
             updateTheme();
         });
 
-        // 다크모드 토글
         function toggleDarkMode() {
             darkMode = !darkMode;
             localStorage.setItem('darkMode', darkMode);
@@ -386,10 +373,9 @@
 
                 darkModeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>';
             }
-            loadPosts(); // 테마 변경 후 포스트 재로드
+            loadPosts();
         }
 
-        // 사이드바 토글
         function toggleSidebar() {
             sidebarOpen = !sidebarOpen;
             const sidebar = document.getElementById('sidebar');
@@ -404,12 +390,10 @@
             }
         }
 
-        // 포스트 검색
         function searchPosts(searchTerm = '') {
             loadPosts(searchTerm.toLowerCase());
         }
 
-        // 태그 필터 토글
         function toggleTag(tag) {
             const index = selectedTags.indexOf(tag);
             if (index > -1) {
@@ -421,7 +405,6 @@
             loadPosts();
         }
 
-        // 태그 필터 업데이트
         function updateTagFilter() {
             const allTags = [...new Set(posts.flatMap(post => post.tags))];
             const tagFilter = document.getElementById('tagFilter');
@@ -455,7 +438,6 @@
             loadPosts();
         }
 
-        // 통계 업데이트
         function updateStats() {
             const stats = document.getElementById('stats');
             const totalPosts = posts.length;
@@ -478,7 +460,6 @@
             `;
         }
 
-        // 포스트 로드
         function loadPosts(searchTerm = '') {
             let filteredPosts = posts.filter(post => {
                 const matchesSearch = !searchTerm || 
@@ -591,7 +572,6 @@
             }
         }
 
-        // 헬퍼 함수들
         function formatDate(dateString) {
             return new Date(dateString).toLocaleDateString('ko-KR', {
                 year: 'numeric',
@@ -610,9 +590,10 @@
                             <div class="rounded-lg overflow-hidden ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}">
                                 ${item.type === 'image' ? `
                                     <img src="${item.url}" alt="${item.name}" 
-                                         class="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform duration-300">
+                                         class="media-image rounded-lg hover:scale-105 transition-transform duration-300" 
+                                         loading="lazy">
                                 ` : item.type === 'video' ? `
-                                    <video controls class="w-full h-48 object-cover rounded-lg">
+                                    <video controls class="w-full max-h-96 object-contain rounded-lg">
                                         <source src="${item.url}">
                                         브라우저가 비디오를 지원하지 않습니다.
                                     </video>
@@ -637,7 +618,6 @@
             `;
         }
 
-        // 좋아요 기능
         function likePost(id) {
             const postIndex = posts.findIndex(p => p.id === Number(id));
             if (postIndex !== -1) {
@@ -648,7 +628,6 @@
             }
         }
 
-        // 에디터 열기
         function openEditor() {
             currentPostId = null;
             currentMedia = [];
@@ -661,7 +640,6 @@
             updateTheme();
         }
 
-        // 포스트 편집
         function editPost(id) {
             const post = posts.find(p => p.id === Number(id));
             if (post) {
@@ -677,14 +655,12 @@
             }
         }
 
-        // 에디터 닫기
         function closeEditor() {
             document.getElementById('editorModal').classList.add('hidden');
             currentPostId = null;
             currentMedia = [];
         }
 
-        // 미디어 추가
         function addMedia(type) {
             const input = document.createElement('input');
             input.type = 'file';
@@ -718,13 +694,11 @@
             input.click();
         }
 
-        // 미디어 제거
         function removeMedia(id) {
             currentMedia = currentMedia.filter(item => item.id !== id);
             updateMediaList();
         }
 
-        // 미디어 목록 업데이트
         function updateMediaList() {
             const mediaList = document.getElementById('mediaList');
             
@@ -764,9 +738,9 @@
                     
                     <div class="p-3">
                         ${media.type === 'image' ? `
-                            <img src="${media.url}" alt="${media.name}" class="w-full h-32 object-cover rounded">
+                            <img src="${media.url}" alt="${media.name}" class="media-image rounded" loading="lazy">
                         ` : media.type === 'video' ? `
-                            <video controls class="w-full h-32 object-cover rounded">
+                            <video controls class="w-full max-h-64 object-contain rounded">
                                 <source src="${media.url}">
                             </video>
                         ` : `
@@ -787,7 +761,6 @@
             `).join('');
         }
 
-        // 포스트 저장
         function savePost() {
             const title = document.getElementById('postTitle').value.trim() || '제목 없음';
             const content = document.getElementById('postContent').value.trim();
@@ -826,11 +799,10 @@
             closeEditor();
         }
 
-        // 포스트 삭제
         function deletePost(id) {
             console.log('Attempting to delete post with ID:', id, 'Type:', typeof id);
             if (confirm('정말로 이 포스트를 삭제하시겠습니까?')) {
-                const postId = Number(id); // ID를 명시적으로 숫자로 변환
+                const postId = Number(id);
                 console.log('Converted post ID:', postId);
                 const postIndex = posts.findIndex(post => post.id === postId);
                 console.log('Post index found:', postIndex);
