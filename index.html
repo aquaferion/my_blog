@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>나의 일상 블로그</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .hover-scale {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .audio-player {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 10px;
+            padding: 15px;
+            color: white;
+        }
+        
+        audio {
+            width: 100%;
+            outline: none;
+        }
+        
+        audio::-webkit-media-controls-panel {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen transition-all duration-300" id="body">
+    
+    <!-- 헤더 -->
+    <header class="sticky top-0 z-50 backdrop-blur-md border-b transition-all duration-300" id="header">
+        <div class="max-w-6xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-purple-100 transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                        나의 일상 블로그
+                    </h1>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <!-- 검색 -->
+                    <div class="relative hidden md:block">
+                        <svg class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" id="searchInput" placeholder="검색..." 
+                               class="pl-10 pr-4 py-2 rounded-full border transition-all duration-200 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                               onkeyup="searchPosts(this.value)">
+                    </div>
+
+                    <!-- 새 글 작성 -->
+                    <button onclick="openEditor()" 
+                            class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        <span class="hidden sm:inline">새 글 작성</span>
+                    </button>
+
+                    <!-- 다크모드 토글 -->
+                    <button onclick="toggleDarkMode()" 
+                            class="p-2 rounded-full transition-all duration-200 hover:shadow-lg" id="darkModeBtn">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="darkModeIcon">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex max-w-6xl mx-auto">
+        <!-- 사이드바 -->
+        <aside class="fixed lg:sticky top-16 h-screen lg:h-auto w-64 lg:w-72 z-40 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 bg-white/70 backdrop-blur-sm" id="sidebar">
+            <div class="p-6 space-y-6">
+                <!-- 모바일 검색 -->
+                <div class="lg:hidden">
+                    <div class="relative">
+                        <svg class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <input type="text" id="mobileSearchInput" placeholder="검색..." 
+                               class="w-full pl-10 pr-4 py-2 rounded-lg border transition-all duration-200 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                               onkeyup="searchPosts(this.value)">
+                    </div>
+                </div>
+
+                <!-- 통계 -->
+                <div class="p-4 rounded-xl shadow-lg" id="statsCard">
+                    <h3 class="text-lg font-semibold mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        통계
+                    </h3>
+                    <div class="space-y-2 text-sm" id="stats">
+                        <!-- 통계 내용이 여기에 동적으로 추가됩니다 -->
+                    </div>
+                </div>
+
+                <!-- 태그 필터 -->
+                <div class="p-4 rounded-xl shadow-lg" id="tagsCard">
+                    <h3 class="text-lg font-semibold mb-3 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"></path>
+                        </svg>
+                        태그 필터
+                    </h3>
+                    <div class="flex flex-wrap gap-2" id="tagFilter">
+                        <!-- 태그들이 여기에 동적으로 추가됩니다 -->
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 오버레이 -->
+        <div class="fixed inset-0 bg-black/50 z-30 lg:hidden hidden" id="overlay" onclick="toggleSidebar()"></div>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="flex-1 p-6">
+            <div id="postsContainer">
+                <!-- 포스트들이 여기에 동적으로 추가됩니다 -->
+            </div>
+        </main>
+    </div>
+
+    <!-- 에디터 모달 -->
+    <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden" id="editorModal">
+        <div class="w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl shadow-2xl" id="editorContent">
+            <div class="p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold" id="editorTitle">새 포스트 작성</h2>
+                    <button onclick="closeEditor()" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- 제목 입력 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">제목</label>
+                    <input type="text" id="postTitle" placeholder="포스트 제목을 입력하세요..." 
+                           class="w-full p-3 rounded-lg border transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                </div>
+
+                <!-- 미디어 추가 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">미디어</label>
+                    <div class="flex space-x-2 mb-3">
+                        <button onclick="addMedia('image')" class="flex items-center space-x-2 px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>이미지</span>
+                        </button>
+                        <button onclick="addMedia('video')" class="flex items-center space-x-2 px-3 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>비디오</span>
+                        </button>
+                        <button onclick="addMedia('music')" class="flex items-center space-x-2 px-3 py-2 bg-purple-100 text-purple-700 rounded-lg hover:bg-purple-200 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                            </svg>
+                            <span>음악</span>
+                        </button>
+                    </div>
+
+                    <!-- 미디어 목록 -->
+                    <div id="mediaList" class="space-y-3">
+                        <!-- 미디어 아이템들이 여기에 추가됩니다 -->
+                    </div>
+                </div>
+
+                <!-- 내용 입력 -->
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">내용</label>
+                    <textarea id="postContent" placeholder="오늘의 이야기를 들려주세요..." rows="12" 
+                              class="w-full p-3 rounded-lg border transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none"></textarea>
+                </div>
+
+                <!-- 태그 입력 -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2">태그</label>
+                    <input type="text" id="postTags" placeholder="태그를 쉼표로 구분하여 입력하세요... (예: 일상, 생각, 감정)" 
+                           class="w-full p-3 rounded-lg border transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                </div>
+
+                <!-- 액션 버튼 -->
+                <div class="flex justify-end space-x-3">
+                    <button onclick="closeEditor()" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                        취소
+                    </button>
+                    <button onclick="savePost()" class="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        <span>포스트 저장</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 전역 변수들
+        let posts = JSON.parse(localStorage.getItem('blogPosts')) || [
+            {
+                id: 1,
+                title: "첫 번째 일기 - 새로운 시작",
+                content: "오늘부터 블로그를 시작하게 되었다. 매일 나의 생각과 일상을 기록하며 성장해나가고 싶다. 이 작은 공간이 나의 소중한 추억들로 가득 찰 것을 상상하니 설렌다.",
+                date: "2025-09-23",
+                tags: ["일상", "시작", "다짐"],
+                likes: 12,
+                comments: 3,
+                media: []
+            },
+            {
+                id: 2,
+                title: "가을 산책길에서 느낀 것들",
+                content: "단풍이 물들기 시작한 길을 걸으며 많은 생각이 들었다. 변화란 때로는 아름다운 것이구나. 나뭇잎들이 생의 마지막을 이토록 화려하게 장식하는 모습에서 삶의 지혜를 배운다.",
+                date: "2025-09-22",
+                tags: ["가을", "산책", "감성"],
+                likes: 8,
+                comments: 1,
+                media: []
+            }
+        ].map(post => ({ ...post, id: Number(post.id) })); // ID를 숫자로 보장
+
+        let currentPostId = null;
+        let darkMode = localStorage.getItem('darkMode') === 'true';
+        let sidebarOpen = false;
+        let selectedTags = [];
+        let currentMedia = [];
+
+        // 페이지 로드 시 초기화
+        document.addEventListener('DOMContentLoaded', function() {
+            // 로컬 스토리지에서 가져온 데이터의 ID를 숫자로 변환
+            posts = posts.map(post => ({ ...post, id: Number(post.id) }));
+            loadPosts();
+            updateStats();
+            updateTagFilter();
+            updateTheme();
+        });
+
+        // 다크모드 토글
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            localStorage.setItem('darkMode', darkMode);
+            updateTheme();
+        }
+
+        function updateTheme() {
+            const body = document.getElementById('body');
+            const header = document.getElementById('header');
+            const sidebar = document.getElementById('sidebar');
+            const statsCard = document.getElementById('statsCard');
+            const tagsCard = document.getElementById('tagsCard');
+            const editorContent = document.getElementById('editorContent');
+            const darkModeBtn = document.getElementById('darkModeBtn');
+            const darkModeIcon = document.getElementById('darkModeIcon');
+            const searchInput = document.getElementById('searchInput');
+            const mobileSearchInput = document.getElementById('mobileSearchInput');
+            const postTitle = document.getElementById('postTitle');
+            const postContent = document.getElementById('postContent');
+            const postTags = document.getElementById('postTags');
+
+            if (darkMode) {
+                body.classList.add('dark', 'bg-gray-900', 'text-white');
+                body.classList.remove('bg-gradient-to-br', 'from-purple-50', 'via-blue-50', 'to-indigo-100');
+                header.classList.add('bg-gray-900/80', 'border-gray-700');
+                header.classList.remove('bg-white/80', 'border-purple-200');
+                sidebar.classList.add('bg-gray-900');
+                sidebar.classList.remove('bg-white/70', 'backdrop-blur-sm');
+                statsCard.classList.add('bg-gray-800');
+                statsCard.classList.remove('bg-white/60', 'backdrop-blur-sm');
+                tagsCard.classList.add('bg-gray-800');
+                tagsCard.classList.remove('bg-white/60', 'backdrop-blur-sm');
+                editorContent.classList.add('bg-gray-800');
+                editorContent.classList.remove('bg-white');
+                darkModeBtn.classList.add('bg-gray-800', 'hover:bg-gray-700');
+                darkModeBtn.classList.remove('bg-white', 'hover:bg-gray-50');
+                
+                if (searchInput) {
+                    searchInput.classList.add('bg-gray-800', 'border-gray-600', 'text-white');
+                    searchInput.classList.remove('bg-white', 'border-gray-200');
+                }
+                if (mobileSearchInput) {
+                    mobileSearchInput.classList.add('bg-gray-800', 'border-gray-600', 'text-white');
+                    mobileSearchInput.classList.remove('bg-white', 'border-gray-200');
+                }
+                if (postTitle) {
+                    postTitle.classList.add('bg-gray-700', 'border-gray-600', 'text-white');
+                    postTitle.classList.remove('bg-white', 'border-gray-200');
+                }
+                if (postContent) {
+                    postContent.classList.add('bg-gray-700', 'border-gray-600', 'text-white');
+                    postContent.classList.remove('bg-white', 'border-gray-200');
+                }
+                if (postTags) {
+                    postTags.classList.add('bg-gray-700', 'border-gray-600', 'text-white');
+                    postTags.classList.remove('bg-white', 'border-gray-200');
+                }
+
+                darkModeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>';
+            } else {
+                body.classList.remove('dark', 'bg-gray-900', 'text-white');
+                body.classList.add('bg-gradient-to-br', 'from-purple-50', 'via-blue-50', 'to-indigo-100');
+                header.classList.remove('bg-gray-900/80', 'border-gray-700');
+                header.classList.add('bg-white/80', 'border-purple-200');
+                sidebar.classList.remove('bg-gray-900');
+                sidebar.classList.add('bg-white/70', 'backdrop-blur-sm');
+                statsCard.classList.remove('bg-gray-800');
+                statsCard.classList.add('bg-white/60', 'backdrop-blur-sm');
+                tagsCard.classList.remove('bg-gray-800');
+                tagsCard.classList.add('bg-white/60', 'backdrop-blur-sm');
+                editorContent.classList.remove('bg-gray-800');
+                editorContent.classList.add('bg-white');
+                darkModeBtn.classList.remove('bg-gray-800', 'hover:bg-gray-700');
+                darkModeBtn.classList.add('bg-white', 'hover:bg-gray-50');
+                
+                if (searchInput) {
+                    searchInput.classList.remove('bg-gray-800', 'border-gray-600', 'text-white');
+                    searchInput.classList.add('bg-white', 'border-gray-200');
+                }
+                if (mobileSearchInput) {
+                    mobileSearchInput.classList.remove('bg-gray-800', 'border-gray-600', 'text-white');
+                    mobileSearchInput.classList.add('bg-white', 'border-gray-200');
+                }
+                if (postTitle) {
+                    postTitle.classList.remove('bg-gray-700', 'border-gray-600', 'text-white');
+                    postTitle.classList.add('bg-white', 'border-gray-200');
+                }
+                if (postContent) {
+                    postContent.classList.remove('bg-gray-700', 'border-gray-600', 'text-white');
+                    postContent.classList.add('bg-white', 'border-gray-200');
+                }
+                if (postTags) {
+                    postTags.classList.remove('bg-gray-700', 'border-gray-600', 'text-white');
+                    postTags.classList.add('bg-white', 'border-gray-200');
+                }
+
+                darkModeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>';
+            }
+            loadPosts(); // 테마 변경 후 포스트 재로드
+        }
+
+        // 사이드바 토글
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            if (sidebarOpen) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // 포스트 검색
+        function searchPosts(searchTerm = '') {
+            loadPosts(searchTerm.toLowerCase());
+        }
+
+        // 태그 필터 토글
+        function toggleTag(tag) {
+            const index = selectedTags.indexOf(tag);
+            if (index > -1) {
+                selectedTags.splice(index, 1);
+            } else {
+                selectedTags.push(tag);
+            }
+            updateTagFilter();
+            loadPosts();
+        }
+
+        // 태그 필터 업데이트
+        function updateTagFilter() {
+            const allTags = [...new Set(posts.flatMap(post => post.tags))];
+            const tagFilter = document.getElementById('tagFilter');
+            
+            tagFilter.innerHTML = allTags.map(tag => `
+                <button onclick="toggleTag('${tag.replace(/'/g, "\\'")}')" 
+                        class="px-3 py-1 rounded-full text-sm transition-all duration-200 ${
+                            selectedTags.includes(tag) 
+                                ? 'bg-purple-600 text-white shadow-md' 
+                                : darkMode 
+                                    ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }">
+                    #${tag}
+                </button>
+            `).join('');
+
+            if (selectedTags.length > 0) {
+                tagFilter.innerHTML += `
+                    <button onclick="clearTagFilter()" 
+                            class="mt-3 text-sm text-purple-600 hover:text-purple-700 transition-colors">
+                        모든 필터 해제
+                    </button>
+                `;
+            }
+        }
+
+        function clearTagFilter() {
+            selectedTags = [];
+            updateTagFilter();
+            loadPosts();
+        }
+
+        // 통계 업데이트
+        function updateStats() {
+            const stats = document.getElementById('stats');
+            const totalPosts = posts.length;
+            const thisMonth = posts.filter(p => p.date.startsWith('2025-09')).length;
+            const totalLikes = posts.reduce((sum, p) => sum + p.likes, 0);
+
+            stats.innerHTML = `
+                <div class="flex justify-between">
+                    <span class="text-gray-600 dark:text-gray-300">총 포스트</span>
+                    <span class="font-medium text-purple-600">${totalPosts}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600 dark:text-gray-300">이번 달</span>
+                    <span class="font-medium text-purple-600">${thisMonth}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600 dark:text-gray-300">총 좋아요</span>
+                    <span class="font-medium text-purple-600">${totalLikes}</span>
+                </div>
+            `;
+        }
+
+        // 포스트 로드
+        function loadPosts(searchTerm = '') {
+            let filteredPosts = posts.filter(post => {
+                const matchesSearch = !searchTerm || 
+                    post.title.toLowerCase().includes(searchTerm) ||
+                    post.content.toLowerCase().includes(searchTerm);
+                const matchesTags = selectedTags.length === 0 || 
+                    selectedTags.some(tag => post.tags.includes(tag));
+                return matchesSearch && matchesTags;
+            });
+
+            const postsContainer = document.getElementById('postsContainer');
+
+            if (filteredPosts.length === 0) {
+                postsContainer.innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-6xl mb-4">📝</div>
+                        <h2 class="text-2xl font-semibold mb-2">아직 포스트가 없습니다</h2>
+                        <p class="text-gray-600 dark:text-gray-300 mb-6">
+                            첫 번째 일기를 작성해보세요!
+                        </p>
+                        <button onclick="openEditor()" 
+                                class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200">
+                            새 글 작성하기
+                        </button>
+                    </div>
+                `;
+            } else {
+                postsContainer.innerHTML = filteredPosts.map(post => `
+                    <article class="fade-in hover-scale p-6 rounded-2xl shadow-xl transition-all duration-300 mb-8 ${
+                        darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white/80 backdrop-blur-sm'
+                    }">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h2 class="text-2xl font-bold mb-2 hover:text-purple-600 transition-colors cursor-pointer" onclick="editPost(${post.id})">
+                                    ${post.title}
+                                </h2>
+                                <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                        </svg>
+                                        ${formatDate(post.date)}
+                                    </span>
+                                    <span class="flex items-center">
+                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                        </svg>
+                                        읽기 시간: ${Math.ceil(post.content.length / 200)}분
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex space-x-2">
+                                <button onclick="editPost(${post.id})" 
+                                        class="p-2 rounded-lg hover:bg-purple-100 dark:hover:bg-gray-700 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                    </svg>
+                                </button>
+                                <button onclick="deletePost(${post.id})" 
+                                        class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-red-500 transition-colors">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        ${renderMediaContent(post.media)}
+
+                        <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
+                            ${post.content}
+                        </p>
+
+                        <div class="flex flex-wrap gap-2 mb-4">
+                            ${post.tags.map(tag => `
+                                <span class="px-3 py-1 rounded-full text-sm ${
+                                    darkMode ? 'bg-gray-700 text-gray-300' : 'bg-purple-100 text-purple-700'
+                                }">
+                                    #${tag}
+                                </span>
+                            `).join('')}
+                        </div>
+
+                        <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                            <div class="flex items-center space-x-6">
+                                <button onclick="likePost(${post.id})" class="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-red-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                    <span>${post.likes}</span>
+                                </button>
+                                <button class="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-blue-500 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                    </svg>
+                                    <span>${post.comments}</span>
+                                </button>
+                            </div>
+                            <button class="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-green-500 transition-colors">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+                                </svg>
+                                <span>공유</span>
+                            </button>
+                        </div>
+                    </article>
+                `).join('');
+            }
+        }
+
+        // 헬퍼 함수들
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function renderMediaContent(media) {
+            if (!media || media.length === 0) return '';
+            
+            return `
+                <div class="mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${media.map((item, index) => `
+                            <div class="rounded-lg overflow-hidden ${darkMode ? 'bg-gray-700' : 'bg-gray-50'}">
+                                ${item.type === 'image' ? `
+                                    <img src="${item.url}" alt="${item.name}" 
+                                         class="w-full h-48 object-cover rounded-lg hover:scale-105 transition-transform duration-300">
+                                ` : item.type === 'video' ? `
+                                    <video controls class="w-full h-48 object-cover rounded-lg">
+                                        <source src="${item.url}">
+                                        브라우저가 비디오를 지원하지 않습니다.
+                                    </video>
+                                ` : `
+                                    <div class="audio-player">
+                                        <div class="flex items-center space-x-3 mb-3">
+                                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                                            </svg>
+                                            <span class="font-medium text-white">${item.name}</span>
+                                        </div>
+                                        <audio controls class="w-full">
+                                            <source src="${item.url}">
+                                            브라우저가 오디오를 지원하지 않습니다.
+                                        </audio>
+                                    </div>
+                                `}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // 좋아요 기능
+        function likePost(id) {
+            const postIndex = posts.findIndex(p => p.id === Number(id));
+            if (postIndex !== -1) {
+                posts[postIndex].likes++;
+                localStorage.setItem('blogPosts', JSON.stringify(posts));
+                loadPosts();
+                updateStats();
+            }
+        }
+
+        // 에디터 열기
+        function openEditor() {
+            currentPostId = null;
+            currentMedia = [];
+            document.getElementById('editorTitle').textContent = '새 포스트 작성';
+            document.getElementById('postTitle').value = '';
+            document.getElementById('postContent').value = '';
+            document.getElementById('postTags').value = '';
+            document.getElementById('mediaList').innerHTML = '';
+            document.getElementById('editorModal').classList.remove('hidden');
+            updateTheme();
+        }
+
+        // 포스트 편집
+        function editPost(id) {
+            const post = posts.find(p => p.id === Number(id));
+            if (post) {
+                currentPostId = id;
+                currentMedia = post.media ? post.media.map(m => ({...m, id: Date.now() + Math.random()})) : [];
+                document.getElementById('editorTitle').textContent = '포스트 수정';
+                document.getElementById('postTitle').value = post.title;
+                document.getElementById('postContent').value = post.content;
+                document.getElementById('postTags').value = post.tags.join(', ');
+                updateMediaList();
+                document.getElementById('editorModal').classList.remove('hidden');
+                updateTheme();
+            }
+        }
+
+        // 에디터 닫기
+        function closeEditor() {
+            document.getElementById('editorModal').classList.add('hidden');
+            currentPostId = null;
+            currentMedia = [];
+        }
+
+        // 미디어 추가
+        function addMedia(type) {
+            const input = document.createElement('input');
+            input.type = 'file';
+            
+            if (type === 'image') {
+                input.accept = 'image/*';
+            } else if (type === 'video') {
+                input.accept = 'video/*';
+            } else if (type === 'music') {
+                input.accept = 'audio/*';
+            }
+            
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const mediaItem = {
+                            id: Date.now() + Math.random(),
+                            type: type,
+                            url: e.target.result,
+                            name: file.name
+                        };
+                        currentMedia.push(mediaItem);
+                        updateMediaList();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+            
+            input.click();
+        }
+
+        // 미디어 제거
+        function removeMedia(id) {
+            currentMedia = currentMedia.filter(item => item.id !== id);
+            updateMediaList();
+        }
+
+        // 미디어 목록 업데이트
+        function updateMediaList() {
+            const mediaList = document.getElementById('mediaList');
+            
+            if (currentMedia.length === 0) {
+                mediaList.innerHTML = '';
+                return;
+            }
+
+            mediaList.innerHTML = currentMedia.map(media => `
+                <div class="rounded-lg border overflow-hidden ${
+                    darkMode ? 'border-gray-600 bg-gray-700' : 'border-gray-200 bg-gray-50'
+                }">
+                    <div class="flex items-center justify-between p-3 border-b border-gray-200 dark:border-gray-600">
+                        <div class="flex items-center space-x-2">
+                            ${media.type === 'image' ? `
+                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            ` : media.type === 'video' ? `
+                                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                            ` : `
+                                <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                                </svg>
+                            `}
+                            <span class="text-sm font-medium">${media.name}</span>
+                        </div>
+                        <button onclick="removeMedia(${media.id})" 
+                                class="text-red-500 hover:text-red-700 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="p-3">
+                        ${media.type === 'image' ? `
+                            <img src="${media.url}" alt="${media.name}" class="w-full h-32 object-cover rounded">
+                        ` : media.type === 'video' ? `
+                            <video controls class="w-full h-32 object-cover rounded">
+                                <source src="${media.url}">
+                            </video>
+                        ` : `
+                            <div class="audio-player">
+                                <div class="flex items-center space-x-2 mb-2">
+                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                                    </svg>
+                                    <span class="text-sm text-white">${media.name}</span>
+                                </div>
+                                <audio controls class="w-full">
+                                    <source src="${media.url}">
+                                </audio>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 포스트 저장
+        function savePost() {
+            const title = document.getElementById('postTitle').value.trim() || '제목 없음';
+            const content = document.getElementById('postContent').value.trim();
+            const tagsInput = document.getElementById('postTags').value.trim();
+            const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+
+            if (!title || !content) {
+                alert('제목과 내용을 입력해주세요.');
+                return;
+            }
+
+            const post = {
+                id: currentPostId || Date.now(),
+                title: title,
+                content: content,
+                date: currentPostId ? posts.find(p => p.id === Number(currentPostId)).date : new Date().toISOString().split('T')[0],
+                tags: tags,
+                likes: currentPostId ? posts.find(p => p.id === Number(currentPostId)).likes : 0,
+                comments: currentPostId ? posts.find(p => p.id === Number(currentPostId)).comments : 0,
+                media: currentMedia.map(m => ({ type: m.type, url: m.url, name: m.name }))
+            };
+
+            if (currentPostId) {
+                const index = posts.findIndex(p => p.id === Number(currentPostId));
+                if (index !== -1) {
+                    posts[index] = post;
+                }
+            } else {
+                posts.unshift(post);
+            }
+
+            localStorage.setItem('blogPosts', JSON.stringify(posts));
+            loadPosts();
+            updateStats();
+            updateTagFilter();
+            closeEditor();
+        }
+
+        // 포스트 삭제
+        function deletePost(id) {
+            console.log('Attempting to delete post with ID:', id, 'Type:', typeof id);
+            if (confirm('정말로 이 포스트를 삭제하시겠습니까?')) {
+                const postId = Number(id); // ID를 명시적으로 숫자로 변환
+                console.log('Converted post ID:', postId);
+                const postIndex = posts.findIndex(post => post.id === postId);
+                console.log('Post index found:', postIndex);
+                if (postIndex !== -1) {
+                    posts.splice(postIndex, 1);
+                    localStorage.setItem('blogPosts', JSON.stringify(posts));
+                    console.log('Post deleted, new posts array:', posts);
+                    loadPosts();
+                    updateStats();
+                    updateTagFilter();
+                } else {
+                    console.error('포스트를 찾을 수 없습니다: ID', postId);
+                    alert('포스트를 삭제할 수 없습니다. 다시 시도해주세요.');
+                }
+            }
+        }
+    </script>
+</body>
+</html>
