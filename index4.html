@@ -5,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>나의 일상 블로그</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
-        
         * {
             font-family: 'Noto Sans KR', sans-serif;
         }
@@ -482,14 +481,18 @@
             if (darkMode) {
                 header.className = 'sticky top-0 z-50 backdrop-blur-md border-b bg-gray-900/80 border-gray-700 transition-all duration-300';
                 sidebar.className = 'fixed lg:sticky top-16 h-screen lg:h-auto w-64 lg:w-72 z-40 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 bg-gray-900';
-                editorContent.classList.remove('bg-white');
-                editorContent.classList.add('bg-gray-800');
+                if(editorContent) {
+                    editorContent.classList.remove('bg-white');
+                    editorContent.classList.add('bg-gray-800');
+                }
                 darkModeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>';
             } else {
                 header.className = 'sticky top-0 z-50 backdrop-blur-md border-b bg-white/80 border-purple-200 transition-all duration-300';
                 sidebar.className = 'fixed lg:sticky top-16 h-screen lg:h-auto w-64 lg:w-72 z-40 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 bg-white/70 backdrop-blur-sm';
-                editorContent.classList.remove('bg-gray-800');
-                editorContent.classList.add('bg-white');
+                if(editorContent) {
+                    editorContent.classList.remove('bg-gray-800');
+                    editorContent.classList.add('bg-white');
+                }
                 darkModeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>';
             }
 
