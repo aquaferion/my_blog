@@ -329,8 +329,9 @@
             document.getElementById('mobileSearchInput').addEventListener('input', (e) => searchPosts(e.target.value));
 
             document.getElementById('colorPickerContainer').addEventListener('click', (e) => {
-                if (e.target.dataset.color) {
-                    changeQAColor(e.target.dataset.color);
+                const target = e.target.closest('button');
+                if (target && target.dataset.color) {
+                    changeQAColor(target.dataset.color);
                 }
             });
 
@@ -525,13 +526,6 @@
             tagFilter.innerHTML = html;
         };
 
-        // 태그 필터 해제
-        const clearTagFilter = () => {
-            selectedTags = [];
-            updateTagFilter();
-            loadPosts();
-        };
-
         // 통계 업데이트
         const updateStats = () => {
             const totalPosts = posts.length;
@@ -579,7 +573,6 @@
                     <button id="ctaEditorBtn" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200">새 글 작성하기</button>
                 </div>`;
                 document.getElementById('ctaEditorBtn').addEventListener('click', openEditor);
-
             } else {
                 let html = '';
                 filteredPosts.forEach(post => {
@@ -702,6 +695,7 @@
                 document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', (e) => editPost(e.currentTarget.dataset.id)));
                 document.querySelectorAll('.post-title').forEach(btn => btn.addEventListener('click', (e) => editPost(e.currentTarget.dataset.id)));
                 document.querySelectorAll('.delete-btn').forEach(btn => btn.addEventListener('click', (e) => deletePost(e.currentTarget.dataset.id)));
+                document.querySelectorAll('.tag-btn').forEach(btn => btn.addEventListener('click', (e) => toggleTag(e.currentTarget.dataset.tag)));
             }
         };
 
@@ -810,17 +804,15 @@
                 return;
             }
 
-            let post;
             if (currentPostId) {
                 const index = posts.findIndex(p => p.id === Number(currentPostId));
                 if (index !== -1) {
-                    post = posts[index];
-                    post.title = title;
-                    post.content = content;
-                    post.tags = tags;
+                    posts[index].title = title;
+                    posts[index].content = content;
+                    posts[index].tags = tags;
                 }
             } else {
-                post = {
+                const newPost = {
                     id: Date.now(),
                     title: title,
                     content: content,
@@ -829,7 +821,7 @@
                     likes: 0,
                     comments: []
                 };
-                posts.unshift(post);
+                posts.unshift(newPost);
             }
 
             localStorage.setItem('blogPosts', JSON.stringify(posts));
