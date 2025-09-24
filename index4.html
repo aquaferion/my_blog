@@ -5,854 +5,394 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>나의 일상 블로그</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap');
+        
         * {
             font-family: 'Noto Sans KR', sans-serif;
         }
         
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
         .hover-scale {
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: transform 0.3s ease;
         }
         
         .hover-scale:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
         }
         
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .audio-player {
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 10px;
-            padding: 15px;
-            color: white;
-        }
-        
-        .media-image {
-            max-width: 100%;
-            max-height: 400px;
-            object-fit: contain;
-            width: auto;
-            height: auto;
-        }
+        .qa-text-default { color: #1a202c; }
+        .dark .qa-text-default { color: #e2e8f0; }
+        .qa-text-blue { color: #2563eb; }
+        .dark .qa-text-blue { color: #60a5fa; }
+        .qa-text-green { color: #16a34a; }
+        .dark .qa-text-green { color: #4ade80; }
+        .qa-text-purple { color: #9333ea; }
+        .dark .qa-text-purple { color: #a855f7; }
+        .qa-text-red { color: #dc2626; }
+        .dark .qa-text-red { color: #f87171; }
+        .qa-text-orange { color: #ea580c; }
+        .dark .qa-text-orange { color: #fb923c; }
 
-        /* Q&A 색상 스타일 */
-        .qa-text {
-            font-family: 'Nanum Gothic', sans-serif;
-            font-size: 1.1rem;
-            transition: color 0.3s ease;
-        }
-
-        .qa-color-default { color: #1a202c; }
-        .dark .qa-color-default { color: #e2e8f0; }
-        
-        .qa-color-blue { color: #2563eb; }
-        .dark .qa-color-blue { color: #60a5fa; }
-        
-        .qa-color-green { color: #16a34a; }
-        .dark .qa-color-green { color: #4ade80; }
-        
-        .qa-color-purple { color: #9333ea; }
-        .dark .qa-color-purple { color: #a855f7; }
-        
-        .qa-color-red { color: #dc2626; }
-        .dark .qa-color-red { color: #f87171; }
-        
-        .qa-color-orange { color: #ea580c; }
-        .dark .qa-color-orange { color: #fb923c; }
-
-        .color-picker-button {
+        .color-btn {
             width: 30px;
             height: 30px;
             border-radius: 50%;
             border: 2px solid transparent;
             cursor: pointer;
-            transition: all 0.2s ease;
             margin: 2px;
         }
-
-        .color-picker-button:hover {
-            transform: scale(1.1);
-            border-color: #374151;
-        }
-
-        .color-picker-button.active {
+        
+        .color-btn.active {
             border-color: #6366f1;
             border-width: 3px;
         }
-
-        .qa-section {
-            border-top: 2px solid #e5e7eb;
-            padding-top: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .dark .qa-section {
-            border-color: #374151;
-        }
-
-        .qa-comment {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            border-left: 4px solid #6366f1;
-            transition: all 0.3s ease;
-        }
-
-        .dark .qa-comment {
-            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-            border-left-color: #818cf8;
-        }
-
-        .qa-comment:hover {
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
     </style>
 </head>
-<body class="min-h-screen transition-all duration-300 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100" id="body">
+<body class="min-h-screen bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100" id="mainBody">
     
-    <header class="sticky top-0 z-50 backdrop-blur-md border-b bg-white/80 border-purple-200 transition-all duration-300" id="header">
-        <div class="max-w-6xl mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-4">
-                    <button id="sidebarToggleBtn" class="lg:hidden p-2 rounded-lg hover:bg-purple-100 transition-colors" data-action="sidebarToggleBtn">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                        </svg>
-                    </button>
-                    <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-                        나의 일상 블로그
-                    </h1>
-                </div>
-
-                <div class="flex items-center space-x-4">
-                    <div class="relative hidden md:block">
-                        <svg class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        <input type="text" id="searchInput" placeholder="검색..." 
-                               class="pl-10 pr-4 py-2 rounded-full border bg-white border-gray-200 transition-all duration-200 focus:ring-2 focus:ring-purple-500 focus:outline-none">
-                    </div>
-
-                    <button id="openEditorBtn" data-action="openEditorBtn"
-                            class="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        <span class="hidden sm:inline">새 글 작성</span>
-                    </button>
-
-                    <button id="darkModeBtn" data-action="darkModeBtn"
-                            class="p-2 rounded-full bg-white hover:bg-gray-50 transition-all duration-200 hover:shadow-lg">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="darkModeIcon">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
-                        </svg>
-                    </button>
-                </div>
+    <!-- 헤더 -->
+    <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-purple-200">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+                나의 일상 블로그
+            </h1>
+            
+            <div class="flex items-center space-x-4">
+                <input type="text" id="searchInput" placeholder="검색..." 
+                       class="px-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500">
+                
+                <button onclick="openEditor()" 
+                        class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full hover:shadow-lg transition-all">
+                    새 글 작성
+                </button>
+                
+                <button onclick="toggleDarkMode()" id="darkModeBtn"
+                        class="p-2 bg-white rounded-full border border-gray-200 hover:shadow-md transition-all">
+                    🌙
+                </button>
             </div>
         </div>
     </header>
 
-    <div class="flex max-w-6xl mx-auto">
-        <aside class="fixed lg:sticky top-16 h-screen lg:h-auto w-64 lg:w-72 z-40 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 bg-white/70 backdrop-blur-sm" id="sidebar">
-            <div class="p-6 space-y-6">
-                <div class="lg:hidden">
-                    <div class="relative">
-                        <svg class="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                        <input type="text" id="mobileSearchInput" placeholder="검색..." 
-                               class="w-full pl-10 pr-4 py-2 rounded-lg border bg-white border-gray-200 transition-all duration-200 focus:ring-2 focus:ring-purple-500 focus:outline-none">
-                    </div>
-                </div>
+    <div class="max-w-6xl mx-auto flex">
+        <!-- 사이드바 -->
+        <aside class="w-72 p-6 space-y-6">
+            <!-- 통계 -->
+            <div class="bg-white/60 backdrop-blur-sm p-4 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold mb-3">📊 통계</h3>
+                <div id="stats" class="space-y-2 text-sm"></div>
+            </div>
 
-                <div class="p-4 rounded-xl shadow-lg bg-white/60 backdrop-blur-sm" id="statsCard">
-                    <h3 class="text-lg font-semibold mb-3 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                        </svg>
-                        통계
-                    </h3>
-                    <div class="space-y-2 text-sm" id="stats"></div>
+            <!-- 색상 선택 -->
+            <div class="bg-white/60 backdrop-blur-sm p-4 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold mb-3">🎨 질문답변 색상</h3>
+                <div class="flex flex-wrap justify-center gap-1">
+                    <button class="color-btn active" style="background: #1a202c;" onclick="changeColor('default')"></button>
+                    <button class="color-btn" style="background: #2563eb;" onclick="changeColor('blue')"></button>
+                    <button class="color-btn" style="background: #16a34a;" onclick="changeColor('green')"></button>
+                    <button class="color-btn" style="background: #9333ea;" onclick="changeColor('purple')"></button>
+                    <button class="color-btn" style="background: #dc2626;" onclick="changeColor('red')"></button>
+                    <button class="color-btn" style="background: #ea580c;" onclick="changeColor('orange')"></button>
                 </div>
+            </div>
 
-                <div class="p-4 rounded-xl shadow-lg bg-white/60 backdrop-blur-sm" id="qaColorCard">
-                    <h3 class="text-lg font-semibold mb-3 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 3H5a2 2 0 00-2 2v12a4 4 0 004 4h2a2 2 0 002-2V5a2 2 0 00-2-2z"></path>
-                        </svg>
-                        질문답변 색상
-                    </h3>
-                    <div class="flex flex-wrap justify-center" id="colorPickerContainer">
-                        <button class="color-picker-button active" data-color="default" style="background: #1a202c;" data-action="colorPickerBtn" title="기본"></button>
-                        <button class="color-picker-button" data-color="blue" style="background: #2563eb;" data-action="colorPickerBtn" title="파랑"></button>
-                        <button class="color-picker-button" data-color="green" style="background: #16a34a;" data-action="colorPickerBtn" title="초록"></button>
-                        <button class="color-picker-button" data-color="purple" style="background: #9333ea;" data-action="colorPickerBtn" title="보라"></button>
-                        <button class="color-picker-button" data-color="red" style="background: #dc2626;" data-action="colorPickerBtn" title="빨강"></button>
-                        <button class="color-picker-button" data-color="orange" style="background: #ea580c;" data-action="colorPickerBtn" title="주황"></button>
-                    </div>
-                </div>
-
-                <div class="p-4 rounded-xl shadow-lg bg-white/60 backdrop-blur-sm" id="tagsCard">
-                    <h3 class="text-lg font-semibold mb-3 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.99 1.99 0 013 12V7a4 4 0 014-4z"></path>
-                        </svg>
-                        태그 필터
-                    </h3>
-                    <div class="flex flex-wrap gap-2" id="tagFilter"></div>
-                </div>
+            <!-- 태그 필터 -->
+            <div class="bg-white/60 backdrop-blur-sm p-4 rounded-xl shadow-lg">
+                <h3 class="text-lg font-semibold mb-3">🏷️ 태그 필터</h3>
+                <div id="tagFilter" class="flex flex-wrap gap-2"></div>
             </div>
         </aside>
 
-        <div class="fixed inset-0 bg-black/50 z-30 lg:hidden hidden" id="overlay" data-action="overlay"></div>
-
+        <!-- 메인 컨텐츠 -->
         <main class="flex-1 p-6">
             <div id="postsContainer"></div>
         </main>
     </div>
 
-    <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 hidden" id="editorModal">
-        <div class="w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-white rounded-2xl shadow-2xl" id="editorContent">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-6">
-                    <h2 class="text-2xl font-bold" id="editorTitle">새 포스트 작성</h2>
-                    <button id="closeEditorBtn" data-action="closeEditorBtn" class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
+    <!-- 편집 모달 -->
+    <div id="editorModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="editorTitle" class="text-2xl font-bold">새 포스트 작성</h2>
+                <button onclick="closeEditor()" class="p-2 hover:bg-gray-100 rounded-lg">✕</button>
+            </div>
 
-                <div class="mb-4">
+            <div class="space-y-4">
+                <div>
                     <label class="block text-sm font-medium mb-2">제목</label>
-                    <input type="text" id="postTitle" placeholder="포스트 제목을 입력하세요..." 
-                           class="w-full p-3 rounded-lg border bg-white border-gray-200 transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    <input type="text" id="postTitle" placeholder="포스트 제목..." 
+                           class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                 </div>
 
-                <div class="mb-4">
+                <div>
                     <label class="block text-sm font-medium mb-2">내용</label>
-                    <textarea id="postContent" placeholder="오늘의 이야기를 들려주세요..." rows="12" 
-                              class="w-full p-3 rounded-lg border bg-white border-gray-200 transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none"></textarea>
+                    <textarea id="postContent" placeholder="오늘의 이야기를 들려주세요..." rows="10" 
+                              class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"></textarea>
                 </div>
 
-                <div class="mb-6">
+                <div>
                     <label class="block text-sm font-medium mb-2">태그</label>
-                    <input type="text" id="postTags" placeholder="태그를 쉼표로 구분하여 입력하세요... (예: 일상, 생각, 감정)" 
-                           class="w-full p-3 rounded-lg border bg-white border-gray-200 transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none">
+                    <input type="text" id="postTags" placeholder="태그를 쉼표로 구분 (예: 일상, 생각)" 
+                           class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
                 </div>
 
-                <div class="flex justify-end space-x-3">
-                    <button id="cancelPostBtn" data-action="cancelPostBtn" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                        취소
-                    </button>
-                    <button id="savePostBtn" data-action="savePostBtn" class="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3-3m0 0l-3 3m3-3v12"></path>
-                        </svg>
-                        <span>포스트 저장</span>
-                    </button>
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button onclick="closeEditor()" 
+                            class="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">취소</button>
+                    <button onclick="savePost()" 
+                            class="px-6 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:shadow-lg">저장</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // 전역 변수들
-        let posts = [];
-        let likedPosts = {};
-        let darkMode = false;
-        let qaTextColor = 'default';
+        // 전역 변수
+        let posts = [
+            {
+                id: 1,
+                title: "첫 번째 일기",
+                content: "오늘부터 블로그를 시작하게 되었다. 매일 나의 생각과 일상을 기록하며 성장해나가고 싶다.",
+                date: "2025-09-23",
+                tags: ["일상", "시작"],
+                likes: 5,
+                comments: [{text: "응원합니다!", date: "2025-09-23"}]
+            }
+        ];
+        
         let currentPostId = null;
-        let sidebarOpen = false;
-        let selectedTags = [];
+        let darkMode = false;
+        let qaColor = 'default';
 
-        // localStorage 사용 가능 여부 확인
-        const isLocalStorageAvailable = () => {
-            try {
-                const test = '__localStorage_test__';
-                localStorage.setItem(test, test);
-                localStorage.removeItem(test);
-                return true;
-            } catch (e) {
-                console.warn("localStorage is not available or restricted.");
-                return false;
-            }
-        };
-
-        // 데이터 로드 (localStorage 또는 기본값)
-        const loadData = () => {
-            if (isLocalStorageAvailable()) {
-                try {
-                    posts = JSON.parse(localStorage.getItem('blogPosts')) || [];
-                    likedPosts = JSON.parse(localStorage.getItem('likedPosts')) || {};
-                    darkMode = localStorage.getItem('darkMode') === 'true';
-                    qaTextColor = localStorage.getItem('qaTextColor') || 'default';
-                } catch (e) {
-                    console.error("Failed to parse data from localStorage. Restoring to default.", e);
-                    resetDataToDefault();
-                }
-            } else {
-                // localStorage를 사용할 수 없는 경우 기본값으로 설정
-                resetDataToDefault();
-            }
-
-            // posts가 비어 있을 때만 기본 포스트 추가
-            if (posts.length === 0) {
-                posts = [
-                    {
-                        id: 1,
-                        title: "첫 번째 일기 - 새로운 시작",
-                        content: "오늘부터 블로그를 시작하게 되었다. 매일 나의 생각과 일상을 기록하며 성장해나가고 싶다. 이 작은 공간이 나의 소중한 추억들로 가득 찰 것을 상상하니 설렌다.",
-                        date: "2025-09-23",
-                        tags: ["일상", "시작", "다짐"],
-                        likes: 12,
-                        comments: [
-                            {
-                                text: "새로운 시작을 응원합니다! 블로그를 통해 많은 좋은 기억들이 쌓이길 바라요.",
-                                date: "2025-09-23"
-                            }
-                        ]
-                    },
-                    {
-                        id: 2,
-                        title: "가을 산책길에서 느낀 것들",
-                        content: "단풍이 물들기 시작한 길을 걸으며 많은 생각이 들었다. 변화란 때로는 아름다운 것이구나. 나뭇잎들이 생의 마지막을 이토록 화려하게 장식하는 모습에서 삶의 지혜를 배운다.",
-                        date: "2025-09-22",
-                        tags: ["가을", "산책", "감성"],
-                        likes: 8,
-                        comments: []
-                    }
-                ];
-                saveData(); // 기본 데이터 저장 시도
-            }
-        };
-
-        const resetDataToDefault = () => {
-            posts = [];
-            likedPosts = {};
-            darkMode = false;
-            qaTextColor = 'default';
-        };
-
-        // 데이터 저장
-        const saveData = () => {
-            if (isLocalStorageAvailable()) {
-                try {
-                    localStorage.setItem('blogPosts', JSON.stringify(posts));
-                    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
-                    localStorage.setItem('darkMode', darkMode);
-                    localStorage.setItem('qaTextColor', qaTextColor);
-                } catch (e) {
-                    console.error("Failed to save data to localStorage.", e);
-                }
-            }
-        };
-
-        // UI 업데이트
-        const updateUI = () => {
+        // 페이지 로드
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPosts();
             updateStats();
-            updateTagFilter();
-            updateColorPicker();
-            updateTheme();
-        };
-
-        // 페이지 로드 시 초기화
-        document.addEventListener('DOMContentLoaded', () => {
-            loadData();
-            renderPosts();
-            updateUI();
-            addGlobalEventListeners();
+            updateTags();
         });
 
-        // 전역 이벤트 리스너 추가 (이벤트 위임)
-        const addGlobalEventListeners = () => {
-            document.addEventListener('click', (e) => {
-                const target = e.target.closest('[data-action]');
-                if (!target) return;
-
-                const action = target.dataset.action;
-                const postId = target.dataset.id;
-                const commentIndex = target.dataset.commentIndex;
-                const tag = target.dataset.tag;
-                const color = target.dataset.color;
-
-                switch (action) {
-                    case 'darkModeBtn':
-                        toggleDarkMode();
-                        break;
-                    case 'sidebarToggleBtn':
-                    case 'overlay':
-                        toggleSidebar();
-                        break;
-                    case 'openEditorBtn':
-                    case 'ctaEditorBtn':
-                        openEditor();
-                        break;
-                    case 'closeEditorBtn':
-                    case 'cancelPostBtn':
-                        closeEditor();
-                        break;
-                    case 'savePostBtn':
-                        savePost();
-                        break;
-                    case 'like':
-                        likePost(postId);
-                        break;
-                    case 'addCommentBtn':
-                        addComment(postId);
-                        break;
-                    case 'deleteCommentBtn':
-                        deleteComment(postId, commentIndex);
-                        break;
-                    case 'editBtn':
-                    case 'post-title':
-                        editPost(postId);
-                        break;
-                    case 'deleteBtn':
-                        deletePost(postId);
-                        break;
-                    case 'tagBtn':
-                        toggleTag(tag);
-                        break;
-                    case 'clearFilter':
-                        clearTagFilter();
-                        break;
-                    case 'colorPickerBtn':
-                        changeQAColor(color);
-                        break;
-                }
-            });
-
-            document.getElementById('searchInput').addEventListener('input', (e) => searchPosts(e.target.value));
-            document.getElementById('mobileSearchInput').addEventListener('input', (e) => searchPosts(e.target.value));
-        };
-        
-        // 다크모드 토글
-        const toggleDarkMode = () => {
-            darkMode = !darkMode;
-            saveData();
-            updateTheme();
-        };
-
-        // 질문답변 색상 변경
-        const changeQAColor = (color) => {
-            qaTextColor = color;
-            saveData();
-            updateColorPicker();
-            renderPosts();
-        };
-
-        // 색상 선택 버튼 업데이트
-        const updateColorPicker = () => {
-            document.querySelectorAll('.color-picker-button').forEach(button => {
-                if (button.dataset.color === qaTextColor) {
-                    button.classList.add('active');
-                } else {
-                    button.classList.remove('active');
-                }
-            });
-        };
-
-        // 테마 업데이트
-        const updateTheme = () => {
-            const body = document.getElementById('body');
-            body.className = darkMode ? 'min-h-screen transition-all duration-300 dark bg-gray-900 text-white' : 'min-h-screen transition-all duration-300 bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100';
-            document.documentElement.classList.toggle('dark', darkMode);
-
-            const editorContent = document.getElementById('editorContent');
-            const darkModeIcon = document.getElementById('darkModeIcon');
-            const header = document.getElementById('header');
-            const sidebar = document.getElementById('sidebar');
-            const cards = ['statsCard', 'qaColorCard', 'tagsCard'];
-            
-            if (darkMode) {
-                header.className = 'sticky top-0 z-50 backdrop-blur-md border-b bg-gray-900/80 border-gray-700 transition-all duration-300';
-                sidebar.className = 'fixed lg:sticky top-16 h-screen lg:h-auto w-64 lg:w-72 z-40 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 bg-gray-900';
-                if(editorContent) {
-                    editorContent.classList.remove('bg-white');
-                    editorContent.classList.add('bg-gray-800');
-                }
-                darkModeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>';
-            } else {
-                header.className = 'sticky top-0 z-50 backdrop-blur-md border-b bg-white/80 border-purple-200 transition-all duration-300';
-                sidebar.className = 'fixed lg:sticky top-16 h-screen lg:h-auto w-64 lg:w-72 z-40 transition-transform duration-300 transform -translate-x-full lg:translate-x-0 bg-white/70 backdrop-blur-sm';
-                if(editorContent) {
-                    editorContent.classList.remove('bg-gray-800');
-                    editorContent.classList.add('bg-white');
-                }
-                darkModeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>';
-            }
-
-            cards.forEach(cardId => {
-                const card = document.getElementById(cardId);
-                if (card) {
-                    card.className = darkMode ? 'p-4 rounded-xl shadow-lg bg-gray-800' : 'p-4 rounded-xl shadow-lg bg-white/60 backdrop-blur-sm';
-                }
-            });
-
-            const inputs = ['searchInput', 'mobileSearchInput', 'postTitle', 'postContent', 'postTags'];
-            inputs.forEach(id => {
-                const input = document.getElementById(id);
-                if (input) {
-                    if (darkMode) {
-                        input.classList.remove('bg-white', 'border-gray-200');
-                        input.classList.add('bg-gray-700', 'border-gray-600', 'text-white');
-                    } else {
-                        input.classList.remove('bg-gray-700', 'border-gray-600', 'text-white');
-                        input.classList.add('bg-white', 'border-gray-200');
-                    }
-                }
-            });
-        };
-
-        // 사이드바 토글
-        const toggleSidebar = () => {
-            sidebarOpen = !sidebarOpen;
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('overlay');
-            
-            if (sidebarOpen) {
-                sidebar.classList.remove('-translate-x-full');
-                overlay.classList.remove('hidden');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-                overlay.classList.add('hidden');
-            }
-        };
-
         // 검색
-        const searchPosts = (searchTerm) => {
-            const normalizedTerm = searchTerm.toLowerCase().trim();
-            document.getElementById('searchInput').value = normalizedTerm;
-            document.getElementById('mobileSearchInput').value = normalizedTerm;
-            renderPosts(normalizedTerm);
-        };
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            loadPosts(e.target.value);
+        });
 
-        // 태그 필터 토글
-        const toggleTag = (tag) => {
-            const index = selectedTags.indexOf(tag);
-            if (index > -1) {
-                selectedTags.splice(index, 1);
-            } else {
-                selectedTags.push(tag);
-            }
-            updateTagFilter();
-            renderPosts();
-        };
+        // 다크모드 토글
+        function toggleDarkMode() {
+            darkMode = !darkMode;
+            document.getElementById('mainBody').classList.toggle('dark');
+            document.getElementById('darkModeBtn').textContent = darkMode ? '☀️' : '🌙';
+            loadPosts();
+        }
 
-        // 태그 필터 업데이트
-        const updateTagFilter = () => {
-            const allTags = [...new Set(posts.flatMap(post => post.tags))];
-            
-            const tagFilter = document.getElementById('tagFilter');
-            let html = '';
-            
-            allTags.forEach(tag => {
-                const isSelected = selectedTags.includes(tag);
-                const buttonClass = isSelected 
-                    ? 'bg-purple-600 text-white shadow-md' 
-                    : (darkMode 
-                        ? 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200');
-                    
-                html += `<button data-tag="${tag}" data-action="tagBtn" class="px-3 py-1 rounded-full text-sm transition-all duration-200 ${buttonClass}">#${tag}</button>`;
-            });
-
-            if (selectedTags.length > 0) {
-                html += '<button data-action="clearFilter" class="mt-3 text-sm text-purple-600 hover:text-purple-700 transition-colors">모든 필터 해제</button>';
-            }
-
-            tagFilter.innerHTML = html;
-        };
+        // 색상 변경
+        function changeColor(color) {
+            qaColor = color;
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            loadPosts();
+        }
 
         // 통계 업데이트
-        const updateStats = () => {
+        function updateStats() {
             const totalPosts = posts.length;
-            const thisMonth = posts.filter(p => p.date.startsWith('2025-09')).length;
             const totalLikes = posts.reduce((sum, p) => sum + p.likes, 0);
             const totalComments = posts.reduce((sum, p) => sum + p.comments.length, 0);
+            
+            document.getElementById('stats').innerHTML = `
+                <div class="flex justify-between">
+                    <span>총 포스트</span>
+                    <span class="font-medium text-purple-600">${totalPosts}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>총 좋아요</span>
+                    <span class="font-medium text-purple-600">${totalLikes}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>총 질문</span>
+                    <span class="font-medium text-purple-600">${totalComments}</span>
+                </div>
+            `;
+        }
 
-            const stats = document.getElementById('stats');
-            stats.innerHTML = `<div class="flex justify-between"><span class="text-gray-600 dark:text-gray-300">총 포스트</span><span class="font-medium text-purple-600">${totalPosts}</span></div>` +
-                `<div class="flex justify-between"><span class="text-gray-600 dark:text-gray-300">이번 달</span><span class="font-medium text-purple-600">${thisMonth}</span></div>` +
-                `<div class="flex justify-between"><span class="text-gray-600 dark:text-gray-300">총 좋아요</span><span class="font-medium text-purple-600">${totalLikes}</span></div>` +
-                `<div class="flex justify-between"><span class="text-gray-600 dark:text-gray-300">총 질문</span><span class="font-medium text-purple-600">${totalComments}</span></div>`;
-        };
+        // 태그 업데이트
+        function updateTags() {
+            const allTags = [...new Set(posts.flatMap(p => p.tags))];
+            document.getElementById('tagFilter').innerHTML = allTags.map(tag => 
+                `<span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm cursor-pointer hover:bg-purple-200">#${tag}</span>`
+            ).join('');
+        }
+
+        // 포스트 로드
+        function loadPosts(searchTerm = '') {
+            const filtered = posts.filter(post => 
+                post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                post.content.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                document.getElementById('postsContainer').innerHTML = `
+                    <div class="text-center py-12">
+                        <div class="text-6xl mb-4">📝</div>
+                        <h2 class="text-2xl font-semibold mb-4">포스트가 없습니다</h2>
+                        <button onclick="openEditor()" class="px-6 py-3 bg-purple-600 text-white rounded-full hover:bg-purple-700">첫 글 작성하기</button>
+                    </div>
+                `;
+                return;
+            }
+
+            document.getElementById('postsContainer').innerHTML = filtered.map(post => `
+                <article class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-lg mb-8 hover-scale">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h2 class="text-2xl font-bold mb-2 cursor-pointer hover:text-purple-600" onclick="editPost(${post.id})">${post.title}</h2>
+                            <div class="text-sm text-gray-500">${formatDate(post.date)} • 읽기 시간: ${Math.ceil(post.content.length / 200)}분</div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="editPost(${post.id})" class="p-2 hover:bg-purple-100 rounded-lg">✏️</button>
+                            <button onclick="deletePost(${post.id})" class="p-2 hover:bg-red-100 rounded-lg">🗑️</button>
+                        </div>
+                    </div>
+
+                    <p class="text-gray-700 mb-4 leading-relaxed">${post.content}</p>
+
+                    <div class="flex gap-2 mb-4">
+                        ${post.tags.map(tag => `<span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">#${tag}</span>`).join('')}
+                    </div>
+
+                    <div class="flex items-center justify-between pt-4 border-t border-gray-200">
+                        <div class="flex items-center space-x-4">
+                            <button onclick="likePost(${post.id})" class="flex items-center space-x-1 text-gray-600 hover:text-red-500">
+                                <span>❤️</span>
+                                <span>${post.likes}</span>
+                            </button>
+                            <span class="flex items-center space-x-1 text-gray-600">
+                                <span>💬</span>
+                                <span>${post.comments.length}</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- 질문답변 섹션 -->
+                    <div class="mt-6 pt-4 border-t border-gray-200">
+                        <h3 class="text-lg font-semibold mb-3">💭 질문과 답변 (${post.comments.length})</h3>
+                        
+                        <div class="space-y-3 mb-4">
+                            ${post.comments.map((comment, idx) => `
+                                <div class="p-3 bg-gray-50 rounded-lg">
+                                    <div class="flex justify-between items-start mb-1">
+                                        <span class="text-xs text-gray-500">${formatDate(comment.date)}</span>
+                                        <button onclick="deleteComment(${post.id}, ${idx})" class="text-red-400 hover:text-red-600 text-sm">삭제</button>
+                                    </div>
+                                    <p class="qa-text-${qaColor} text-base">${comment.text}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="flex space-x-2">
+                            <textarea id="comment-${post.id}" placeholder="질문을 입력하세요..." rows="2" 
+                                      class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"></textarea>
+                            <button onclick="addComment(${post.id})" 
+                                    class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 self-end">등록</button>
+                        </div>
+                    </div>
+                </article>
+            `).join('');
+        }
 
         // 날짜 포맷
-        const formatDate = (dateString) => {
-            return new Date(dateString).toLocaleDateString('ko-KR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-        };
-
-        // 포스트 렌더링
-        const renderPosts = (searchTerm = '') => {
-            const filteredPosts = posts.filter(post => {
-                const matchesSearch = !searchTerm || 
-                    post.title.toLowerCase().includes(searchTerm) ||
-                    post.content.toLowerCase().includes(searchTerm);
-                const matchesTags = selectedTags.length === 0 || 
-                    selectedTags.some(tag => post.tags.includes(tag));
-                return matchesSearch && matchesTags;
-            });
-
-            const postsContainer = document.getElementById('postsContainer');
-            let html = '';
-
-            if (filteredPosts.length === 0) {
-                const message = searchTerm || selectedTags.length > 0 ? '검색 결과가 없습니다' : '아직 포스트가 없습니다';
-                const subMessage = searchTerm || selectedTags.length > 0 ? '다른 키워드로 검색해보세요!' : '첫 번째 일기를 작성해보세요!';
-                
-                html = `<div class="text-center py-12">
-                    <div class="text-6xl mb-4">📝</div>
-                    <h2 class="text-2xl font-semibold mb-2">${message}</h2>
-                    <p class="text-gray-600 dark:text-gray-300 mb-6">${subMessage}</p>
-                    <button id="ctaEditorBtn" data-action="ctaEditorBtn" class="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full hover:shadow-lg transform hover:scale-105 transition-all duration-200">새 글 작성하기</button>
-                </div>`;
-            } else {
-                filteredPosts.forEach(post => {
-                    const postClass = darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white/80 backdrop-blur-sm';
-                    const tagClass = darkMode ? 'bg-gray-700 text-gray-300' : 'bg-purple-100 text-purple-700';
-                    const isLiked = likedPosts[post.id];
-                    
-                    html += `<article class="fade-in hover-scale p-6 rounded-2xl shadow-xl transition-all duration-300 mb-8 ${postClass}">
-                        <div class="flex justify-between items-start mb-4">
-                            <div>
-                                <h2 class="text-2xl font-bold mb-2 hover:text-purple-600 transition-colors cursor-pointer post-title" data-id="${post.id}" data-action="post-title">${post.title}</h2>
-                                <div class="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
-                                    <span class="flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                        ${formatDate(post.date)}
-                                    </span>
-                                    <span class="flex items-center">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                        </svg>
-                                        읽기 시간: ${Math.ceil(post.content.length / 200)}분
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="p-2 rounded-lg hover:bg-purple-100 dark:hover:bg-gray-700 transition-colors edit-btn" data-id="${post.id}" data-action="editBtn" title="포스트 수정">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                    </svg>
-                                </button>
-                                <button class="p-2 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/20 text-red-500 transition-colors delete-btn" data-id="${post.id}" data-action="deleteBtn" title="포스트 삭제">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                        <p class="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">${post.content}</p>
-                        <div class="flex flex-wrap gap-2 mb-4">`;
-                        
-                    post.tags.forEach(tag => {
-                        html += `<button class="px-3 py-1 rounded-full text-sm ${tagClass} hover:bg-purple-200 dark:hover:bg-gray-600 transition-colors cursor-pointer tag-btn" data-tag="${tag}" data-action="tagBtn">#${tag}</button>`;
-                    });
-                        
-                    html += `</div>
-                        <div class="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-                            <div class="flex items-center space-x-6">
-                                <button class="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-red-500 transition-colors like-btn ${isLiked ? 'text-red-500' : ''}" data-id="${post.id}" data-action="like">
-                                    <svg class="w-5 h-5" fill="${isLiked ? 'currentColor' : 'none'}" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                                    </svg>
-                                    <span>${post.likes}</span>
-                                </button>
-                                <span class="flex items-center space-x-2 text-gray-600 dark:text-gray-300">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
-                                    </svg>
-                                    <span>${post.comments.length}</span>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="qa-section">
-                            <h3 class="text-lg font-semibold mb-4 flex items-center">
-                                <svg class="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                                질문과 답변 (${post.comments.length})
-                            </h3>
-                            <div class="space-y-3 mb-4">`;
-                            
-                    post.comments.forEach((comment, index) => {
-                        html += `<div class="qa-comment p-4 rounded-lg transition-all duration-300">
-                            <div class="flex justify-between items-start mb-2">
-                                <span class="text-xs text-gray-500 dark:text-gray-400">${formatDate(comment.date)}</span>
-                                <button class="text-red-400 hover:text-red-600 transition-colors delete-comment-btn" data-post-id="${post.id}" data-comment-index="${index}" data-action="deleteCommentBtn" title="질문 삭제">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                            <p class="qa-text qa-color-${qaTextColor}">${comment.text}</p>
-                        </div>`;
-                    });
-                        
-                    const textareaClass = darkMode ? 'bg-gray-700 border-gray-600 text-white' : 'bg-white border-gray-200';
-                    const colorName = qaTextColor === 'default' ? '기본' : 
-                                    qaTextColor === 'blue' ? '파랑' :
-                                    qaTextColor === 'green' ? '초록' :
-                                    qaTextColor === 'purple' ? '보라' :
-                                    qaTextColor === 'red' ? '빨강' : '주황';
-                        
-                    html += `</div>
-                            <div class="mt-4">
-                                <textarea id="comment-text-${post.id}" placeholder="궁금한 점이나 생각을 자유롭게 질문해보세요..." rows="3" class="w-full p-3 rounded-lg border transition-all focus:ring-2 focus:ring-purple-500 focus:outline-none resize-vertical ${textareaClass}"></textarea>
-                                <div class="flex justify-between items-center mt-3">
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">
-                                        현재 질문답변 색상: <span class="qa-color-${qaTextColor} font-medium">${colorName}</span>
-                                    </span>
-                                    <button class="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-lg hover:shadow-lg transform hover:scale-105 transition-all duration-200 flex items-center space-x-2 add-comment-btn" data-id="${post.id}" data-action="addCommentBtn">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                        </svg>
-                                        <span>질문 등록</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </article>`;
-                });
-            }
-            postsContainer.innerHTML = html;
-        };
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('ko-KR');
+        }
 
         // 좋아요
-        const likePost = (id) => {
-            const postId = Number(id);
-            const post = posts.find(p => p.id === postId);
-            if (!post) return;
-
-            if (likedPosts[postId]) {
-                post.likes--;
-                delete likedPosts[postId];
-            } else {
+        function likePost(id) {
+            const post = posts.find(p => p.id === id);
+            if (post) {
                 post.likes++;
-                likedPosts[postId] = true;
+                loadPosts();
+                updateStats();
             }
-
-            saveData();
-            renderPosts();
-            updateStats();
-        };
+        }
 
         // 댓글 추가
-        const addComment = (id) => {
-            const postId = Number(id);
-            const textArea = document.getElementById(`comment-text-${postId}`);
-            const text = textArea.value.trim();
+        function addComment(id) {
+            const textarea = document.getElementById(`comment-${id}`);
+            const text = textarea.value.trim();
             if (text) {
-                const post = posts.find(p => p.id === postId);
+                const post = posts.find(p => p.id === id);
                 if (post) {
                     post.comments.push({
                         text: text,
                         date: new Date().toISOString().split('T')[0]
                     });
-                    saveData();
-                    textArea.value = '';
-                    renderPosts();
+                    textarea.value = '';
+                    loadPosts();
                     updateStats();
                 }
-            } else {
-                alert('질문 내용을 입력해주세요!');
             }
-        };
+        }
 
         // 댓글 삭제
-        const deleteComment = (postId, commentIndex) => {
+        function deleteComment(postId, commentIdx) {
             if (confirm('이 질문을 삭제하시겠습니까?')) {
-                const post = posts.find(p => p.id === Number(postId));
+                const post = posts.find(p => p.id === postId);
                 if (post) {
-                    post.comments.splice(Number(commentIndex), 1);
-                    saveData();
-                    renderPosts();
+                    post.comments.splice(commentIdx, 1);
+                    loadPosts();
                     updateStats();
                 }
             }
-        };
+        }
 
         // 편집기 열기
-        const openEditor = () => {
+        function openEditor() {
             currentPostId = null;
             document.getElementById('editorTitle').textContent = '새 포스트 작성';
             document.getElementById('postTitle').value = '';
             document.getElementById('postContent').value = '';
             document.getElementById('postTags').value = '';
             document.getElementById('editorModal').classList.remove('hidden');
-            updateTheme();
-        };
+        }
 
         // 포스트 수정
-        const editPost = (id) => {
-            const post = posts.find(p => p.id === Number(id));
+        function editPost(id) {
+            const post = posts.find(p => p.id === id);
             if (post) {
-                currentPostId = post.id;
+                currentPostId = id;
                 document.getElementById('editorTitle').textContent = '포스트 수정';
                 document.getElementById('postTitle').value = post.title;
                 document.getElementById('postContent').value = post.content;
                 document.getElementById('postTags').value = post.tags.join(', ');
                 document.getElementById('editorModal').classList.remove('hidden');
-                updateTheme();
             }
-        };
+        }
 
         // 편집기 닫기
-        const closeEditor = () => {
+        function closeEditor() {
             document.getElementById('editorModal').classList.add('hidden');
-            currentPostId = null;
-        };
+        }
 
         // 포스트 저장
-        const savePost = () => {
+        function savePost() {
             const title = document.getElementById('postTitle').value.trim();
             const content = document.getElementById('postContent').value.trim();
             const tagsInput = document.getElementById('postTags').value.trim();
-            const tags = tagsInput ? tagsInput.split(',').map(tag => tag.trim()).filter(tag => tag) : [];
+            const tags = tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(t => t) : [];
 
-            if (!title) {
-                alert('제목을 입력해주세요.');
-                document.getElementById('postTitle').focus();
-                return;
-            }
-
-            if (!content) {
-                alert('내용을 입력해주세요.');
-                document.getElementById('postContent').focus();
+            if (!title || !content) {
+                alert('제목과 내용을 입력해주세요.');
                 return;
             }
 
             if (currentPostId) {
-                const index = posts.findIndex(p => p.id === Number(currentPostId));
-                if (index !== -1) {
-                    posts[index].title = title;
-                    posts[index].content = content;
-                    posts[index].tags = tags;
+                const post = posts.find(p => p.id === currentPostId);
+                if (post) {
+                    post.title = title;
+                    post.content = content;
+                    post.tags = tags;
                 }
             } else {
-                const newPost = {
+                posts.unshift({
                     id: Date.now(),
                     title: title,
                     content: content,
@@ -860,37 +400,24 @@
                     tags: tags,
                     likes: 0,
                     comments: []
-                };
-                posts.unshift(newPost);
+                });
             }
 
-            saveData();
-            renderPosts();
-            updateUI();
             closeEditor();
-
-            const action = currentPostId ? '수정' : '작성';
-            setTimeout(() => {
-                alert(`포스트가 성공적으로 ${action}되었습니다!`);
-            }, 100);
-        };
+            loadPosts();
+            updateStats();
+            updateTags();
+        }
 
         // 포스트 삭제
-        const deletePost = (id) => {
-            if (confirm('정말로 이 포스트를 삭제하시겠습니까?\n삭제된 포스트는 복구할 수 없습니다.')) {
-                const postId = Number(id);
-                const postIndex = posts.findIndex(post => post.id === postId);
-                if (postIndex !== -1) {
-                    posts.splice(postIndex, 1);
-                    saveData();
-                    renderPosts();
-                    updateUI();
-                    alert('포스트가 삭제되었습니다.');
-                } else {
-                    alert('포스트를 삭제할 수 없습니다. 다시 시도해주세요.');
-                }
+        function deletePost(id) {
+            if (confirm('정말로 이 포스트를 삭제하시겠습니까?')) {
+                posts = posts.filter(p => p.id !== id);
+                loadPosts();
+                updateStats();
+                updateTags();
             }
-        };
+        }
     </script>
 </body>
 </html>
